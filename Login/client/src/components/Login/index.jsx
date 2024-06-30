@@ -15,7 +15,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = `${import.meta.env.VITE_API_BASE_URL}/api/auth`;
+      const url = `${import.meta.env.VITE_API_BASE_URL}api/auth`;
       const { data: res } = await axios.post(url, data);
       console.log("Login response:", res); // Log the response
       localStorage.setItem("token", res.data.token);

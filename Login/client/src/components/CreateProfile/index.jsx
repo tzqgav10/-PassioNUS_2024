@@ -21,7 +21,7 @@ const CreateProfile = () => {
     e.preventDefault();
     try {
       const userId = localStorage.getItem("userId"); // Get userId from local storage
-      const url = `${import.meta.env.VITE_API_BASE_URL}/api/create_profile`; // Updated URL
+      const url = `${import.meta.env.VITE_API_BASE_URL}api/create_profile`; // Updated URL
       const res = await axios.post(url, { ...data, userId }); // Include userId in the request body
       console.log("Profile created successfully:", res.data); // Logging response
       navigate("/interests"); // Navigate to the interest page after successful profile creation
