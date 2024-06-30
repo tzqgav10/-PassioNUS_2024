@@ -10,7 +10,7 @@ const SingleMatch = () => {
 
   useEffect(() => {
     const fetchBestMatch = async () => {
-      const url = `http://localhost:8080/api/matching/best-match`;
+      const url = `${import.meta.env.VITE_API_BASE_URL}api/matching/best-match`;
       try {
         const { data: res } = await axios.get(url);
         if (res.message) {

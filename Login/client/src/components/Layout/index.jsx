@@ -19,7 +19,7 @@ const Layout = () => {
           <Link to="/matching">Matching</Link>
           <Link to="/study">Study Buddy</Link>
           <Link to="/events">Events</Link>
-          <Link to="/game">Games</Link>
+          <Link to="/chat">Chat</Link>
           <Link to="/profile">Edit Profile</Link>
           <Link to="/settings">Settings</Link>
         </div>

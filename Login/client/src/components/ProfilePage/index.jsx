@@ -29,12 +29,16 @@ const ProfilePage = () => {
         const userId = localStorage.getItem("userId");
 
         // Fetch profile data
-        const profileUrl = `http://localhost:8080/api/profile/${userId}`;
+        const profileUrl = `${
+          import.meta.env.VITE_API_BASE_URL
+        }api/interests/${userId}`;
         const profileRes = await axios.get(profileUrl);
         const profileData = profileRes.data;
 
         // Fetch interests data
-        const interestsUrl = `http://localhost:8080/api/interests/${userId}`;
+        const interestsUrl = `${
+          import.meta.env.VITE_API_BASE_URL
+        }api/interests/${userId}`;
         const interestsRes = await axios.get(interestsUrl);
         const interestsData = interestsRes.data;
 
