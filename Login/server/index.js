@@ -1,8 +1,8 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path"); // Import the path module
 const app = express();
 const cors = require("cors");
-const path = require("path"); // Add this line to import the path module
 const connection = require("./database");
 const userRoutes = require("./routes/students");
 const authRoutes = require("./routes/auth");
@@ -26,7 +26,10 @@ app.set("view engine", "ejs");
 // Serve static files from the uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// routes
+// Serve static files from the Vite build
+app.use(express.static(path.join(__dirname, 'client', 'dist')));
+
+// API routes
 app.use("/api/students", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/create_profile", create_profileRoutes);
@@ -36,5 +39,12 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/change-password", changePasswordRoutes);
 app.use("/api/matching", matchingRoutes);
 
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+});
+
 const port = process.env.PORT || 8080;
-app.listen(port, console.log(`Listening on port ${port}...`));
+app.listen(port, () => {
+  console.log(`Listening on port ${port}...`);
+});
