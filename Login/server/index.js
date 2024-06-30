@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const path = require("path"); // Import the path module
+const path = require("path");
 const app = express();
 const cors = require("cors");
 const connection = require("./database");
@@ -27,7 +27,8 @@ app.set("view engine", "ejs");
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve static files from the Vite build
-app.use(express.static(path.join(__dirname, 'client', 'dist')));
+const clientBuildPath = path.join(__dirname, '../client/dist');
+app.use(express.static(clientBuildPath));
 
 // API routes
 app.use("/api/students", userRoutes);
@@ -41,7 +42,7 @@ app.use("/api/matching", matchingRoutes);
 
 // Handle React routing, return all requests to React app
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+  res.sendFile(path.resolve(clientBuildPath, 'index.html'));
 });
 
 const port = process.env.PORT || 8080;
