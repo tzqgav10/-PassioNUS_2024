@@ -31,7 +31,7 @@ const ProfilePage = () => {
         // Fetch profile data
         const profileUrl = `${
           import.meta.env.VITE_API_BASE_URL
-        }api/interests/${userId}`;
+        }api/profile/${userId}`;
         const profileRes = await axios.get(profileUrl);
         const profileData = profileRes.data;
 
