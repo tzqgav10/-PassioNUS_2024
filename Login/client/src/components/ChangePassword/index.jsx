@@ -21,7 +21,7 @@ const ChangePassword = () => {
     e.preventDefault();
     try {
       const userId = localStorage.getItem("userId"); // Ensure userId is available
-      const url = `http://localhost:8080/api/change-password`;
+      const url = `${import.meta.env.VITE_API_BASE_URL}api/change-password`;
       const { data: res } = await axios.post(
         url,
         { ...data, userId },
