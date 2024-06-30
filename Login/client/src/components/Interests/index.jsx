@@ -24,7 +24,7 @@ const InterestsForm = () => {
     e.preventDefault();
     try {
       const userId = localStorage.getItem("userId");
-      const url = `${import.meta.env.VITE_API_BASE_URL}/api/interets`;
+      const url = `${import.meta.env.VITE_API_BASE_URL}/api/interests`;
       const res = await axios.post(url, { ...data, userId });
       console.log("Interests saved successfully:", res.data);
       navigate("/home");
