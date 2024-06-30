@@ -104,7 +104,7 @@ const ProfilePage = () => {
       // Update profile data
       const profileUrl = `${
         import.meta.env.VITE_API_BASE_URL
-      }/api/profile/${userId}`;
+      }api/profile/${userId}`;
 
       const profileData = {
         name: profile.name,
@@ -117,7 +117,7 @@ const ProfilePage = () => {
       // Update interests data
       const interestsUrl = `${
         import.meta.env.VITE_API_BASE_URL
-      }/api/interests/${userId}`;
+      }api/interests/${userId}`;
       await axios.put(interestsUrl, profile.interests);
 
       setIsEditing(false);

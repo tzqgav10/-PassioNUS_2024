@@ -14,6 +14,8 @@ import ChangePassword from "./components/ChangePassword";
 import SingleMatch from "./components/SingleMatching";
 import MatchOptions from "./components/MatchOptions";
 import GroupMatch from "./components/GroupMatching";
+import Chat from "./components/Chat";
+import StudyBuddy from "./components/StudyBuddy";
 
 function App() {
   const user = localStorage.getItem("token");
@@ -37,11 +39,11 @@ function App() {
             <Route path="matching" element={<MatchOptions />} />
             <Route path="match_single" element={<SingleMatch />} />
             <Route path="match_group" element={<GroupMatch />} />
-            <Route path="study" element={<Main />} />
+            <Route path="study" element={<StudyBuddy />} />
             <Route path="events" element={<Events />} />
             <Route path="create_event" element={<CreateEvents />} />
             <Route path="profile" element={<ProfilePage />} />
-            <Route path="chat" element={<Main />} />
+            <Route path="chat" element={<Chat />} />
             <Route path="settings" element={<ChangePassword />} />
           </Route>
         </>
