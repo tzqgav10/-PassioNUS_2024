@@ -27,7 +27,7 @@ app.set("view engine", "ejs");
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve static files from the Vite build
-const clientBuildPath = path.join(__dirname, '../../client/dist');
+const clientBuildPath = path.join(__dirname, '../client/dist'); // Adjusted path
 app.use(express.static(clientBuildPath));
 
 // API routes
