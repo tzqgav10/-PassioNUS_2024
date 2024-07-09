@@ -79,10 +79,24 @@ router.get("/", async (req, res) => {
         res.status(200).json(
             await event.find()
                 .sort({date: 1})
-                .limit(20)
+                .limit(30)
         );
     } catch (error) {
         console.error('Error fetching events:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const eventDoc = await event.findById(id);
+        if (!eventDoc) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+        res.json(eventDoc);
+    } catch (error) {
+        console.error('Error fetching event:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
