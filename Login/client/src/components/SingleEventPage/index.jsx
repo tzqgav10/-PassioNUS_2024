@@ -14,6 +14,11 @@ const SingleEventPage = () => {
     });
   }, [id]);
 
+  const formatDate = (dateString) => {
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+    return new Date(dateString).toLocaleDateString("en-GB", options);
+  };
+
   if (!postInfo) return "Loading...";
 
   return (
@@ -27,7 +32,7 @@ const SingleEventPage = () => {
       <h1 className={styles.header}>{postInfo.title}</h1>
       <p className={styles.summary}>{postInfo.summary}</p>
       <p className={styles.venue}>{postInfo.venue}</p>
-      <p className={styles.date}>{postInfo.date}</p>
+      <p className={styles.date}>{formatDate(postInfo.date)}</p>
       <div
         className={styles.content}
         dangerouslySetInnerHTML={{ __html: postInfo.content }}

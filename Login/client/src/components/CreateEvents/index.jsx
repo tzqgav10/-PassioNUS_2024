@@ -3,6 +3,7 @@ import axios from "axios";
 import styles from "./styles.module.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useNavigate } from "react-router-dom";
 
 const CreateEvents = () => {
   const [data, setData] = useState({
@@ -15,6 +16,7 @@ const CreateEvents = () => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
@@ -103,54 +105,74 @@ const CreateEvents = () => {
     }
   }, [error, success]); // To clear error or success msg after 3s
 
+  const getTodayDate = () => {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const year = today.getFullYear();
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleBack = () => {
+    navigate("/events");
+  };
+
   return (
-    <form className={styles.container} onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="title"
-        placeholder="Title"
-        value={data.title}
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        name="summary"
-        placeholder="Summary"
-        value={data.summary}
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        name="venue"
-        placeholder="Venue"
-        value={data.venue}
-        onChange={handleChange}
-      />
-      <input
-        type="date"
-        name="date"
-        placeholder="Date"
-        value={data.date}
-        onChange={handleChange}
-      />
-      <input
-        type="file"
-        className={styles.fileInput}
-        onChange={handleFileChange}
-      />
-      <div className={styles.quillContainer}>
-        <ReactQuill
-          className={styles.quill}
-          value={data.content}
-          onChange={(content) => setData({ ...data, content })}
-        />
+    <div className={styles.pageContainer}>
+      <div className={styles.backButtonContainer}>
+        <button onClick={handleBack} className={styles.backButton}>
+          Back
+        </button>
       </div>
-      {error && <div className={styles.error}>{error}</div>}
-      {success && <div className={styles.success}>{success}</div>}
-      <button type="submit" className={styles.createButton}>
-        Create Event
-      </button>
-    </form>
+      <form className={styles.container} onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="title"
+          placeholder="Title"
+          value={data.title}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="summary"
+          placeholder="Summary"
+          value={data.summary}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="venue"
+          placeholder="Venue"
+          value={data.venue}
+          onChange={handleChange}
+        />
+        <input
+          type="date"
+          name="date"
+          placeholder="Date"
+          value={data.date}
+          onChange={handleChange}
+          min={getTodayDate()}
+        />
+        <input
+          type="file"
+          className={styles.fileInput}
+          onChange={handleFileChange}
+        />
+        <div className={styles.quillContainer}>
+          <ReactQuill
+            className={styles.quill}
+            value={data.content}
+            onChange={(content) => setData({ ...data, content })}
+          />
+        </div>
+        {error && <div className={styles.error}>{error}</div>}
+        {success && <div className={styles.success}>{success}</div>}
+        <button type="submit" className={styles.createButton}>
+          Create Event
+        </button>
+      </form>
+    </div>
   );
 };
 
