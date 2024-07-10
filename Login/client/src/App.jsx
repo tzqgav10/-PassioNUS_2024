@@ -15,6 +15,7 @@ import SingleMatch from "./components/SingleMatching";
 import MatchOptions from "./components/MatchOptions";
 import GroupMatch from "./components/GroupMatching";
 import SingleEventPage from "./components/SingleEventPage";
+import EditEvent from "./components/EditEvent";
 
 function App() {
   const user = localStorage.getItem("token");
@@ -40,7 +41,8 @@ function App() {
             <Route path="match_group" element={<GroupMatch />} />
             <Route path="study" element={<Main />} />
             <Route path="events" element={<Events />} />
-            <Route path="/post/:id" element={<SingleEventPage />} />
+            <Route path="post/:id" element={<SingleEventPage />} />
+            <Route path="edit_event/:id" element={<EditEvent />} />
             <Route path="create_event" element={<CreateEvents />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="chat" element={<Main />} />

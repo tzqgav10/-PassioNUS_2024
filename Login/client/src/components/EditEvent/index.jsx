@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./styles.module.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { useNavigate } from "react-router-dom";
 
-const CreateEvents = () => {
+const EditEvent = () => {
   const [data, setData] = useState({
     title: "",
     summary: "",
@@ -17,6 +17,29 @@ const CreateEvents = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/events/${id}`
+        );
+        const event = response.data;
+        setData({
+          title: event.title,
+          summary: event.summary,
+          venue: event.venue,
+          date: event.date,
+          content: event.content,
+        });
+      } catch (error) {
+        console.error("Error fetching event:", error);
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
@@ -63,14 +86,14 @@ const CreateEvents = () => {
     }
 
     try {
-      const url = `http://localhost:8080/api/events`;
-      const response = await axios.post(url, formData, {
+      const url = `http://localhost:8080/api/events/${id}`;
+      const response = await axios.put(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       console.log("Success:", response.data);
-      setSuccess("Event created successfully!");
+      setSuccess("Event updated successfully!");
       // Optionally, reset the form here
       setData({
         title: "",
@@ -82,7 +105,7 @@ const CreateEvents = () => {
       setFile(null);
       // Redirect or show success message
       setTimeout(() => {
-        navigate("/events"); // Use navigate instead of window.location
+        navigate(`/post/${id}`); // Redirect to the event page
       }, 2000);
     } catch (error) {
       if (
@@ -116,17 +139,12 @@ const CreateEvents = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const handleBack = () => {
-    navigate("/events"); // Use navigate instead of window.location
+  const handleCancel = () => {
+    navigate(`/post/${id}`); // Redirect to the event page
   };
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.backButtonContainer}>
-        <button onClick={handleBack} className={styles.backButton}>
-          Back
-        </button>
-      </div>
       <form className={styles.container} onSubmit={handleSubmit}>
         <input
           type="text"
@@ -172,11 +190,18 @@ const CreateEvents = () => {
         {error && <div className={styles.error}>{error}</div>}
         {success && <div className={styles.success}>{success}</div>}
         <button type="submit" className={styles.createButton}>
-          Create Event
+          Update Event
+        </button>
+        <button
+          type="button"
+          onClick={handleCancel}
+          className={styles.cancelButton}
+        >
+          Cancel
         </button>
       </form>
     </div>
   );
 };
 
-export default CreateEvents;
+export default EditEvent;

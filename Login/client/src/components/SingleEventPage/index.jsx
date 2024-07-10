@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 
 const SingleEventPage = () => {
   const [postInfo, setPostInfo] = useState(null);
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const userId = localStorage.getItem("userId"); // Get userId from localStorage
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/events/${id}`).then((response) => {
@@ -21,8 +24,26 @@ const SingleEventPage = () => {
 
   if (!postInfo) return "Loading...";
 
+  const handleBack = () => {
+    navigate("/events");
+  };
+
+  const handleEdit = () => {
+    navigate(`/edit_event/${id}`);
+  };
+
   return (
     <div className={styles.container}>
+      <div className={styles.buttonsContainer}>
+        <button onClick={handleBack} className={styles.backButton}>
+          Back
+        </button>
+        {postInfo.userId === userId && (
+          <button onClick={handleEdit} className={styles.editButton}>
+            Edit Post
+          </button>
+        )}
+      </div>
       <div className={styles.image}>
         <img
           src={`http://localhost:8080/${postInfo.cover}`}
