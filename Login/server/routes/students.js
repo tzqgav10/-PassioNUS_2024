@@ -12,10 +12,13 @@ router.post("/", async (req, res) => {
 			return res.status(400).send({ message: error.details[0].message });
 
 		let user = await studentModel.findOne({ email: req.body.email });
-		if (user)
-			return res
-				.status(409)
-				.send({ message: "User with given email already Exist!" });
+		if (user) {
+			if (!user.verified) {
+				return res.status(409).send({ message: "A verification email has already been sent out." });
+			} else {
+				return res.status(409).send({ message: "User with given email already exists!" });
+			}
+		}
 
 		const salt = await bcrypt.genSalt(Number(process.env.SALT));
 		const hashPassword = await bcrypt.hash(req.body.password, salt);
@@ -31,7 +34,7 @@ router.post("/", async (req, res) => {
 
 		res
 			.status(201)
-			.send({ message: "An Email sent to your account please verify" });
+			.send({ message: "An email has been sent to your school email, please verify." });
 	} catch (error) {
 		console.log(error);
 		res.status(500).send({ message: "Internal Server Error" });
@@ -53,7 +56,7 @@ router.get("/:id/verify/:token/", async (req, res) => {
 		await token.deleteOne({ _id: token._id });
 		
 		if (user.verified) {
-		res.status(200).send({ message: "Email verified successfully" });
+		res.status(200).send({ message: "Email has been verified successfully" });
 		}
 	} catch (error) {
 		res.status(500).send({ message: "Internal Server Error" });

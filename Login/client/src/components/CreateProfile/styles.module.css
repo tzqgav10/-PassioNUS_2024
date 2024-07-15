@@ -10,7 +10,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 91vh;
   background-image: url('../../images/ogu.png');
   background-size: cover;
   /* Ensure the image covers the entire background */
