@@ -1,15 +1,14 @@
-// src/components/ChatMessages.js
 import React, { useEffect, useState, useRef } from "react";
 import { Box, Text, Input, Button, VStack, HStack } from "@chakra-ui/react";
 import axios from "axios";
 import { ChatState } from "../../Context/ChatProvider";
 
 const ChatMessages = () => {
-  const { selectedChat, user } = ChatState();
+  const { selectedChat } = ChatState();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId"); // Retrieve the current user's ID from local storage
+  const userId = localStorage.getItem("userId");
 
   const messagesEndRef = useRef(null);
 
@@ -51,8 +50,10 @@ const ChatMessages = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setMessages([...messages, data]);
         setNewMessage("");
+        // Append the message immediately to the sender's view
+        setMessages((prevMessages) => [...prevMessages, data]);
+        scrollToBottom(); // Ensure scroll to bottom after sending a message
       } catch (error) {
         console.error("Failed to send message:", error);
       }
