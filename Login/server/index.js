@@ -12,6 +12,9 @@ const eventRoutes = require("./routes/events");
 const profileRoutes = require("./routes/profile");
 const changePasswordRoutes = require("./routes/changePassword");
 const matchingRoutes = require("./routes/matching");
+const { chats } = require("./data/data");
+const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 // database connection
 connection();
@@ -35,6 +38,18 @@ app.use("/api/events", eventRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/change-password", changePasswordRoutes);
 app.use("/api/matching", matchingRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/message", messageRoutes);
+
+// testing for chat feature
+/*app.get("/api/chat", (req, res) => {
+    res.send(chats);
+});
+
+app.get("/api/chat/:id", (req, res) => {
+    const singleChat = chats.find((c) => c._id === req.params.id);
+    res.send(singleChat);
+});*/
 
 const port = process.env.PORT || 8080;
 app.listen(port, console.log(`Listening on port ${port}...`));

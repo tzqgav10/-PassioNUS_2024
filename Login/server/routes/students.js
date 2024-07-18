@@ -4,6 +4,8 @@ const Token = require("../models/token");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 const bcrypt = require("bcrypt");
+const { allUsers } = require("../controllers/userController");
+const { protect } = require("../middleware/authMiddleware");
 
 router.post("/", async (req, res) => {
 	try {
@@ -62,5 +64,8 @@ router.get("/:id/verify/:token/", async (req, res) => {
 		res.status(500).send({ message: "Internal Server Error" });
 	}
 });
+
+// chat feature to search for users
+router.route("/").get(protect, allUsers);
 
 module.exports = router;

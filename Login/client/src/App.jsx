@@ -16,6 +16,7 @@ import MatchOptions from "./components/MatchOptions";
 import GroupMatch from "./components/GroupMatching";
 import SingleEventPage from "./components/SingleEventPage";
 import EditEvent from "./components/EditEvent";
+import ChatPage from "./components/Chat";
 
 function App() {
   const user = localStorage.getItem("token");
@@ -45,7 +46,7 @@ function App() {
             <Route path="edit_event/:id" element={<EditEvent />} />
             <Route path="create_event" element={<CreateEvents />} />
             <Route path="profile" element={<ProfilePage />} />
-            <Route path="chat" element={<Main />} />
+            <Route path="chat" element={<ChatPage />} />
             <Route path="settings" element={<ChangePassword />} />
           </Route>
         </>
