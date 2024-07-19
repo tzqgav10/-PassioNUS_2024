@@ -2,21 +2,50 @@ import React, { useEffect, useState, useRef } from "react";
 import { Box, Text, Input, Button, VStack, HStack } from "@chakra-ui/react";
 import axios from "axios";
 import { ChatState } from "../../Context/ChatProvider";
+import io from "socket.io-client";
+
+const ENDPOINT = "http://localhost:8080";
+var socket, selectedChatCompare;
 
 const ChatMessages = () => {
   const { selectedChat } = ChatState();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [socketConnected, setSocketConnected] = useState(false);
+  /*const [typing, setTyping] = useState(false);
+  const [istyping, setIsTyping] = useState(false);*/
+
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
 
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    if (selectedChat) {
-      fetchMessages();
-    }
+    socket = io(ENDPOINT);
+    socket.emit("setup", userId);
+    socket.on("connected", () => setSocketConnected(true));
+    /*socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));*/
+  }, []);
+
+  useEffect(() => {
+    fetchMessages();
+
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
+
+  useEffect(() => {
+    socket.on("message received", (newMessageReceived) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageReceived.chat._id
+      ) {
+        // give notification
+      } else {
+        setMessages([...messages, newMessageReceived]);
+      }
+    });
+  });
 
   useEffect(() => {
     scrollToBottom();
@@ -31,6 +60,8 @@ const ChatMessages = () => {
         }
       );
       setMessages(data);
+
+      socket.emit("join chat", selectedChat._id);
     } catch (error) {
       console.error("Failed to fetch messages:", error);
     }
@@ -51,6 +82,7 @@ const ChatMessages = () => {
           }
         );
         setNewMessage("");
+        socket.emit("new message", data);
         // Append the message immediately to the sender's view
         setMessages((prevMessages) => [...prevMessages, data]);
         scrollToBottom(); // Ensure scroll to bottom after sending a message
@@ -62,6 +94,28 @@ const ChatMessages = () => {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+  };
+
+  const typingHandler = (e) => {
+    setNewMessage(e.target.value);
+
+    /*if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+
+      if(timeDiff >= timerLength && typing) {
+        socket.emit('stopTyping', selectedChat._id);
+        setTyping(false);
+      }
+    }, timerLength);*/
   };
 
   return (
@@ -90,7 +144,7 @@ const ChatMessages = () => {
           <HStack>
             <Input
               value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              onChange={typingHandler}
               placeholder="Type a message..."
             />
             <Button type="submit" colorScheme="blue">
