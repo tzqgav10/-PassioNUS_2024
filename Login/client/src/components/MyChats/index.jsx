@@ -2,6 +2,10 @@ import React, { useEffect } from "react";
 import { Box, VStack, Text } from "@chakra-ui/react";
 import { ChatState } from "../../Context/ChatProvider";
 import axios from "axios";
+import io from "socket.io-client";
+
+const ENDPOINT = "http://localhost:8080";
+var socket;
 
 const MyChats = () => {
   const { chats, setChats, selectedChat, setSelectedChat } = ChatState();
@@ -24,6 +28,39 @@ const MyChats = () => {
 
     fetchChats();
   }, [setChats]);
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    const userId = localStorage.getItem("userId");
+    socket.emit("setup", userId);
+
+    socket.on("message received", (newMessageReceived) => {
+      updateLatestMessage(newMessageReceived);
+    });
+
+    // Listen for custom event
+    const handleMessageSent = (event) => {
+      updateLatestMessage(event.detail);
+    };
+    window.addEventListener("message-sent", handleMessageSent);
+
+    return () => {
+      socket.disconnect();
+      window.removeEventListener("message-sent", handleMessageSent);
+    };
+  }, []);
+
+  const updateLatestMessage = (newMessageReceived) => {
+    setChats((prevChats) => {
+      const updatedChats = prevChats.map((chat) => {
+        if (chat._id === newMessageReceived.chat._id) {
+          chat.latestMessage = newMessageReceived;
+        }
+        return chat;
+      });
+      return updatedChats;
+    });
+  };
 
   return (
     <Box mt={4}>

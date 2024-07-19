@@ -43,6 +43,7 @@ const ChatMessages = () => {
         // give notification
       } else {
         setMessages([...messages, newMessageReceived]);
+        updateChatList(newMessageReceived);
       }
     });
   });
@@ -86,6 +87,9 @@ const ChatMessages = () => {
         // Append the message immediately to the sender's view
         setMessages((prevMessages) => [...prevMessages, data]);
         scrollToBottom(); // Ensure scroll to bottom after sending a message
+
+        // Emit custom event
+        window.dispatchEvent(new CustomEvent("message-sent", { detail: data }));
       } catch (error) {
         console.error("Failed to send message:", error);
       }
@@ -98,24 +102,13 @@ const ChatMessages = () => {
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
+  };
 
-    /*if (!socketConnected) return;
-
-    if (!typing) {
-      setTyping(true);
-      socket.emit("typing", selectedChat._id);
-    }
-    let lastTypingTime = new Date().getTime();
-    var timerLength = 3000;
-    setTimeout(() => {
-      var timeNow = new Date().getTime();
-      var timeDiff = timeNow - lastTypingTime;
-
-      if(timeDiff >= timerLength && typing) {
-        socket.emit('stopTyping', selectedChat._id);
-        setTyping(false);
-      }
-    }, timerLength);*/
+  const updateChatList = (newMessageReceived) => {
+    const event = new CustomEvent("message-sent", {
+      detail: newMessageReceived,
+    });
+    window.dispatchEvent(event);
   };
 
   return (
