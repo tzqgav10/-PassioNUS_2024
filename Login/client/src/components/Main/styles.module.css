@@ -18,7 +18,7 @@ body {
 	align-items: center;
 	width: 100vw;
 	/* Ensure the container takes the full viewport width */
-	height: 89.8vh;
+	height: 89.5vh;
 	/* Ensure the container takes the full viewport height */
 	background-image: url('../../images/ogu.png');
 	background-size: cover;

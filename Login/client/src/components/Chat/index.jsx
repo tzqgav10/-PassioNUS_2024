@@ -8,7 +8,7 @@ const ChatPage = () => {
   const { selectedChat } = ChatState();
 
   return (
-    <div style={{ width: "100%", height: "89.8vh" }}>
+    <div style={{ width: "100%", height: "89.5vh" }}>
       <Box display="flex" height="100%">
         <Box
           width="30%"
