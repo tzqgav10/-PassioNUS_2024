@@ -13,7 +13,6 @@ import ProfilePage from "./components/ProfilePage";
 import ChangePassword from "./components/ChangePassword";
 import SingleMatch from "./components/SingleMatching";
 import MatchOptions from "./components/MatchOptions";
-import GroupMatch from "./components/GroupMatching";
 import SingleEventPage from "./components/SingleEventPage";
 import EditEvent from "./components/EditEvent";
 import ChatPage from "./components/Chat";
@@ -39,7 +38,6 @@ function App() {
             <Route path="home" element={<Main />} />
             <Route path="matching" element={<MatchOptions />} />
             <Route path="match_single" element={<SingleMatch />} />
-            <Route path="match_group" element={<GroupMatch />} />
             <Route path="study" element={<Main />} />
             <Route path="events" element={<Events />} />
             <Route path="post/:id" element={<SingleEventPage />} />

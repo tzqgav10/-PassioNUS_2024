@@ -1,57 +1,60 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import styles from "./styles.module.css";
 
-const SingleMatch = () => {
-  const [bestMatch, setBestMatch] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null);
+const Matching = () => {
+  const [gender, setGender] = useState("no-preference");
+  const [match, setMatch] = useState(null);
 
-  useEffect(() => {
-    const fetchBestMatch = async () => {
-      const url = `http://localhost:8080/api/matching/best-match`;
-      try {
-        const { data: res } = await axios.get(url);
-        if (res.message) {
-          setMessage(res.message);
-        } else {
-          setBestMatch(res);
-        }
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      console.error("No userId found in localStorage");
+      return;
+    }
+
+    console.log("Submitting form with gender:", gender);
+
+    const url = "http://localhost:8080/api/matching";
+    const data = {
+      gender,
+      userId, // Include userId in the data
     };
 
-    fetchBestMatch();
-  }, []);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p className={styles.errorMessage}>Error: {error}</p>;
-  }
-
-  if (message) {
-    return <p className={styles.message}>{message}</p>;
-  }
-
-  if (!bestMatch) {
-    return <p className={styles.message}>No match found.</p>;
-  }
+    try {
+      const response = await axios.post(url, data, { withCredentials: true }); // Include credentials
+      setMatch(response.data);
+      console.log("Best match user:", response.data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setMatch(null);
+    }
+  };
 
   return (
-    <div className={styles.bestMatchContainer}>
-      <h2>Best Match</h2>
-      <p>User 1: {bestMatch.user1}</p>
-      <p>User 2: {bestMatch.user2}</p>
-      <p>Number of Matching Interests: {bestMatch.matches}</p>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Gender Preference:
+          <select value={gender} onChange={(e) => setGender(e.target.value)}>
+            <option value="no-preference">No Preference</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </label>
+        <button type="submit">Match</button>
+      </form>
+      {match && (
+        <div>
+          <h2>Best Match:</h2>
+          <p>{JSON.stringify(match)}</p>
+        </div>
+      )}
     </div>
   );
 };
 
-export default SingleMatch;
+export default Matching;
