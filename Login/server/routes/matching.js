@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const collection = require('../models/config'); // Import your User model
 const Interest = require('../models/interests'); // Import your Interest model
+const { studentModel: Student } = require('../models/Student'); 
 
 router.post('/', async (req, res) => {
   console.log('Received POST request at /api/matching');
@@ -37,14 +38,14 @@ router.post('/', async (req, res) => {
     const matchingUserInterests = await Interest.findOne({ userId: userObjectId });
     console.log('Matching user interests:', matchingUserInterests);
     if (!matchingUserInterests) {
-      return res.status(404).json({ error: 'Matching user interests not found' });
+      return res.json({ message: 'No matches found' });
     }
 
     // Find matching user profile using findOne with userId
     const matchingUser = await collection.findOne({ userId: userObjectId });
     console.log('Matching user profile:', matchingUser);
     if (!matchingUser) {
-      return res.status(404).json({ error: 'Matching user not found' });
+      return res.json({ message: 'No matches found' });
     }
 
     const matchingUserYear = matchingUser.year;
@@ -63,10 +64,13 @@ router.post('/', async (req, res) => {
         return score + (matchingUserInterests[key] && userInterests[key] ? 1 : 0);
       }, 0);
 
-      return { user, score: overlap, yearGap: Math.abs(user.year - matchingUserYear) };
+      const overlappingInterests = interestKeys.filter(key => matchingUserInterests[key] && userInterests[key]);
+
+      return { user, score: overlap, yearGap: Math.abs(user.year - matchingUserYear), overlappingInterests };
     }));
 
     console.log('User scores:', userScores);
+    console.log('Student model:', Student);
 
     // Sort users based on score and year gap
     userScores.sort((a, b) => {
@@ -76,15 +80,34 @@ router.post('/', async (req, res) => {
       return b.score - a.score;
     });
 
+    if (userScores.length === 0 || userScores[0].score === 0) {
+      return res.json({ message: 'No matches found' });
+    }
+
     const highestScore = userScores[0].score;
     const smallestYearGap = userScores[0].yearGap;
     const topMatches = userScores.filter(userScore =>
       userScore.score === highestScore && userScore.yearGap === smallestYearGap
     );
 
-    const bestMatch = topMatches[Math.floor(Math.random() * topMatches.length)].user;
+    const bestMatch = topMatches[Math.floor(Math.random() * topMatches.length)];
 
-    res.json(bestMatch);
+    // Fetch the email from the Student model
+    const bestMatchStudent = await Student.findOne({ _id: bestMatch.user.userId });
+    if (!bestMatchStudent) {
+      return res.json({ message: 'No matches found' });
+    }
+
+    // Include only name, faculty, year, and overlapping interests in the response
+    const bestMatchWithInterests = {
+      name: bestMatch.user.name,
+      faculty: bestMatch.user.faculty,
+      year: bestMatch.user.year,
+      interests: bestMatch.overlappingInterests,
+      email: bestMatchStudent.email // Add email to the response
+    };
+
+    res.json(bestMatchWithInterests);
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({ error: 'Error fetching users' });
