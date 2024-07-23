@@ -3,7 +3,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const collection = require('../models/config'); // Import your User model
 const Interest = require('../models/interests'); // Import your Interest model
-const { studentModel: Student } = require('../models/Student'); 
+const Chat = require('../models/chatModel');
+const { studentModel: Student } = require('../models/Student');
 
 router.post('/', async (req, res) => {
   console.log('Received POST request at /api/matching');
@@ -21,7 +22,7 @@ router.post('/', async (req, res) => {
 
   try {
     // Convert userId to ObjectId
-    const userObjectId = userId;
+    const userObjectId = new mongoose.Types.ObjectId(userId);
     console.log('Converted userId to ObjectId:', userObjectId);
 
     // Fetch users based on gender, excluding the user making the request
@@ -49,6 +50,19 @@ router.post('/', async (req, res) => {
     }
 
     const matchingUserYear = matchingUser.year;
+
+    // Fetch existing chats for the current user
+    const existingChats = await Chat.find({ users: { $elemMatch: { $eq: userObjectId } } }).select('users');
+    const existingChatUserIds = existingChats.flatMap(chat => chat.users.filter(id => !id.equals(userObjectId)).map(id => id.toString()));
+
+    console.log('Existing chat user IDs:', existingChatUserIds);
+
+    // Exclude users who already have a chat with the current user
+    users = users.filter(user => !existingChatUserIds.includes(user.userId.toString()));
+
+    if (users.length === 0) {
+      return res.json({ message: 'No matches found' });
+    }
 
     // Calculate scores for users
     const userScores = await Promise.all(users.map(async (user) => {
@@ -104,7 +118,8 @@ router.post('/', async (req, res) => {
       faculty: bestMatch.user.faculty,
       year: bestMatch.user.year,
       interests: bestMatch.overlappingInterests,
-      email: bestMatchStudent.email // Add email to the response
+      email: bestMatchStudent.email, // Add email to the response
+      userId: bestMatch.user.userId // Ensure userId is included in the response
     };
 
     res.json(bestMatchWithInterests);

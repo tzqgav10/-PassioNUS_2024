@@ -1,22 +1,24 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
 import styles from "./styles.module.css";
+import { ChatState } from "../../Context/ChatProvider";
+import { accessChat } from "../ChatBox"; // Import the accessChat function
 
 const Matching = () => {
   const [gender, setGender] = useState("no-preference");
   const [match, setMatch] = useState(null);
   const [noMatchMessage, setNoMatchMessage] = useState("");
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { chats, setChats, setSelectedChat } = ChatState();
+  const currentUserId = localStorage.getItem("userId");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Retrieve userId from localStorage
-    const userId = localStorage.getItem("userId");
-
-    // Check if userId exists
-    if (!userId) {
+    if (!currentUserId) {
       console.error("No userId found in localStorage");
       return;
     }
@@ -24,19 +26,16 @@ const Matching = () => {
     console.log("Submitting form with gender:", gender);
 
     const url = "http://localhost:8080/api/matching";
-    const data = {
-      gender,
-      userId, // Include userId in the data
-    };
+    const data = { gender, userId: currentUserId };
 
     try {
-      const response = await axios.post(url, data, { withCredentials: true }); // Include credentials
+      const response = await axios.post(url, data, { withCredentials: true });
       if (response.data.message) {
         setNoMatchMessage(response.data.message);
         setMatch(null);
         setTimeout(() => {
           setNoMatchMessage("");
-        }, 3000); // Clear the message after 3 seconds
+        }, 3000);
       } else {
         setMatch(response.data);
         setNoMatchMessage("");
@@ -48,9 +47,10 @@ const Matching = () => {
     }
   };
 
-  const handleChatRedirect = () => {
+  const handleChatRedirect = async () => {
     if (match) {
-      // Redirect to chat page with matched user's name in the search query
+      console.log("Redirecting to chat with user:", match.userId);
+      await accessChat(match.userId, chats, setChats, setSelectedChat, toast);
       navigate(`/chat?search=${encodeURIComponent(match.name)}`);
     }
   };
@@ -98,7 +98,7 @@ const Matching = () => {
           <p>Name: {match.name}</p>
           <p>Faculty: {match.faculty}</p>
           <p>Year: {match.year}</p>
-          <p>Matching Interests: {match.interests.join(", ")}</p>
+          <p>Interests: {match.interests.join(", ")}</p>
           <p>
             Email: <a href={`mailto:${match.email}`}>{match.email}</a>{" "}
             {/* Clickable email link */}

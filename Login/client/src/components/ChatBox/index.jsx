@@ -3,25 +3,63 @@ import { Box, Input, VStack, Text, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { ChatState } from "../../Context/ChatProvider";
 
+export const accessChat = async (
+  userId,
+  chats,
+  setChats,
+  setSelectedChat,
+  toast
+) => {
+  console.log("accessChat called with userId:", userId);
+  try {
+    const token = localStorage.getItem("token");
+    const { data } = await axios.post(
+      "http://localhost:8080/api/chat",
+      { userId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("Chat data received:", data);
+
+    // Check if the chat is already in the list
+    if (!chats.find((chat) => chat._id === data._id)) {
+      setChats([data, ...chats]); // Add new chat to the list
+    }
+    setSelectedChat(data);
+  } catch (error) {
+    console.error("Failed to access chat", error);
+    toast({
+      title: "Error accessing chat.",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  }
+};
+
 const ChatBox = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchPerformed, setSearchPerformed] = useState(false); // Track if a search has been performed
+  const [searchPerformed, setSearchPerformed] = useState(false);
   const toast = useToast();
   const { chats, setChats, setSelectedChat } = ChatState();
-  const userId = localStorage.getItem("userId"); // Retrieve the current user's ID from local storage
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchUsers = async () => {
       if (searchQuery.trim() === "") {
         setUsers([]);
-        setSearchPerformed(false); // Reset search performed status
+        setSearchPerformed(false);
         return;
       }
 
       setLoading(true);
-      setSearchPerformed(true); // Set search performed status to true
+      setSearchPerformed(true);
 
       try {
         const token = localStorage.getItem("token");
@@ -33,7 +71,6 @@ const ChatBox = () => {
             },
           }
         );
-        // Filter out the current user using the userId from local storage
         const filteredUsers = data.filter((user) => user._id !== userId);
         setUsers(filteredUsers);
       } catch (error) {
@@ -50,36 +87,7 @@ const ChatBox = () => {
     };
 
     fetchUsers();
-  }, [searchQuery, toast, userId]); // Include userId as a dependency
-
-  const accessChat = async (userId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const { data } = await axios.post(
-        "http://localhost:8080/api/chat",
-        { userId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Check if the chat is already in the list
-      if (!chats.find((chat) => chat._id === data._id)) {
-        setChats([data, ...chats]); // Add new chat to the list
-      }
-      setSelectedChat(data);
-    } catch (error) {
-      console.error("Failed to access chat", error);
-      toast({
-        title: "Error accessing chat.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
+  }, [searchQuery, toast, userId]);
 
   return (
     <Box position="relative">
@@ -104,23 +112,29 @@ const ChatBox = () => {
           borderRadius="md"
         >
           <VStack spacing={4} align="stretch">
-            {
-              users.length > 0
-                ? users.map((user) => (
-                    <Box
-                      key={user._id}
-                      p={4}
-                      bg="gray.100"
-                      borderRadius="md"
-                      onClick={() => accessChat(user._id)}
-                      cursor="pointer"
-                    >
-                      <Text fontWeight="bold">{user.name}</Text>
-                      <Text>Email: {user.email}</Text>
-                    </Box>
-                  ))
-                : searchPerformed && <Text>No users found</Text> // Only show if search has been performed
-            }
+            {users.length > 0
+              ? users.map((user) => (
+                  <Box
+                    key={user._id}
+                    p={4}
+                    bg="gray.100"
+                    borderRadius="md"
+                    onClick={() =>
+                      accessChat(
+                        user._id,
+                        chats,
+                        setChats,
+                        setSelectedChat,
+                        toast
+                      )
+                    }
+                    cursor="pointer"
+                  >
+                    <Text fontWeight="bold">{user.name}</Text>
+                    <Text>Email: {user.email}</Text>
+                  </Box>
+                ))
+              : searchPerformed && <Text>No users found</Text>}
           </VStack>
         </Box>
       )}
