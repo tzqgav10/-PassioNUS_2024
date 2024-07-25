@@ -9,18 +9,11 @@ const MatchOptions = () => {
     navigate("/match_single");
   };
 
-  const handleGroupMatch = () => {
-    navigate("/match_group");
-  };
-
   return (
     <div className={styles.matchOptionsContainer}>
       <h2>Make a new friend today!</h2>
       <button className={styles.matchButton} onClick={handleSingleMatch}>
         Find a new friend
-      </button>
-      <button className={styles.matchButton} onClick={handleGroupMatch}>
-        Join a group
       </button>
     </div>
   );

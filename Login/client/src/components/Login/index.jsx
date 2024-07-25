@@ -37,6 +37,9 @@ const Login = () => {
         console.error("Login error response:", error.response); // Log the error response
         if (error.response.status >= 400 && error.response.status <= 500) {
           setError(error.response.data.message);
+          setTimeout(() => {
+            setError("");
+          }, 3000); // Clear the error message after 3 seconds
         }
       } else {
         console.error("Login error:", error); // Log the general error if there's no response

@@ -3,7 +3,6 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const event = require("../models/events"); // Ensure the correct model is imported
-const { date } = require("joi");
 
 // Set storage engine for multer
 const storage = multer.diskStorage({
@@ -51,7 +50,7 @@ router.post("/", (req, res) => {
         }
 
         // Access form data
-        const { title, summary, venue, date, content } = req.body;
+        const { title, summary, venue, date, content, userId } = req.body;
         const cover = path.join('uploads', req.file.filename); // Path to the uploaded file
 
         try {
@@ -63,6 +62,7 @@ router.post("/", (req, res) => {
                 date,
                 content,
                 cover,
+                userId, // Save userId with the event
             });
 
             // Send a success response
@@ -74,15 +74,64 @@ router.post("/", (req, res) => {
     });
 });
 
+// @route   PUT api/events/:id
+// @desc    Update an event
+// @access  Public
+router.put("/:id", (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ message: err.message });
+        }
+
+        // Access form data
+        const { title, summary, venue, date, content, userId } = req.body;
+        const updateData = { title, summary, venue, date, content };
+
+        if (req.file) {
+            updateData.cover = path.join('uploads', req.file.filename); // Path to the uploaded file
+        }
+
+        try {
+            // Update the event
+            const updatedEvent = await event.findByIdAndUpdate(req.params.id, updateData, { new: true });
+
+            if (!updatedEvent) {
+                return res.status(404).json({ message: 'Event not found' });
+            }
+
+            // Send a success response
+            res.status(200).json({ message: 'Event updated successfully', data: updatedEvent });
+        } catch (error) {
+            console.error('Error updating event:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    });
+});
+
 router.get("/", async (req, res) => {
     try {
+        const today = new Date().toISOString().split('T')[0];
         res.status(200).json(
-            await event.find()
-                .sort({date: 1})
-                .limit(20)
+            await event.find({ date: { $gte: today } })
+                .sort({ date: 1 })
+                .limit(30)
         );
     } catch (error) {
         console.error('Error fetching events:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const eventDoc = await event.findById(id);
+        if (!eventDoc) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+        res.json(eventDoc);
+    } catch (error) {
+        console.error('Error fetching event:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

@@ -22,6 +22,10 @@ const Signup = () => {
       const url = `${import.meta.env.VITE_API_BASE_URL}api/students`;
       const { data: res } = await axios.post(url, data);
       setMsg(res.message);
+      setError(""); // Clear any previous errors
+      setTimeout(() => {
+        setMsg("");
+      }, 5000); // Clear the success message after 5 seconds
     } catch (error) {
       if (
         error.response &&
@@ -29,6 +33,10 @@ const Signup = () => {
         error.response.status <= 500
       ) {
         setError(error.response.data.message);
+        setMsg(""); // Clear any previous success message
+        setTimeout(() => {
+          setError("");
+        }, 3000); // Clear the error message after 3 seconds
       }
     }
   };
@@ -49,10 +57,10 @@ const Signup = () => {
             <h1>Create Account</h1>
             <input
               type="text"
-              placeholder="Name"
+              placeholder="Full Name"
               name="name"
               onChange={handleChange}
-              value={data.Name}
+              value={data.name}
               required
               className={styles.input}
             />
@@ -66,6 +74,9 @@ const Signup = () => {
               pattern=".+@u.nus.edu$"
               className={styles.input}
             />
+            <div className={styles.email_hint}>
+              * Only school email accounts are accepted (e.g., user@u.nus.edu)
+            </div>
             <input
               type="password"
               placeholder="Password"
@@ -77,7 +88,7 @@ const Signup = () => {
             />
             {error && <div className={styles.error_msg}>{error}</div>}
             {msg && <div className={styles.success_msg}>{msg}</div>}
-            <button type="submit" className={styles.green_btn}>
+            <button type="submit" className={styles.blue_btn}>
               Sign Up
             </button>
           </form>

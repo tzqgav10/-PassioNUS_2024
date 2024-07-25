@@ -16,7 +16,12 @@ const Events = () => {
           throw new Error("Network response was not ok");
         }
         const events = await response.json();
-        setEvents(events);
+
+        // Filter out past events
+        const today = new Date().toISOString().split("T")[0];
+        const upcomingEvents = events.filter((event) => event.date >= today);
+
+        setEvents(upcomingEvents);
       } catch (error) {
         console.error("Error fetching events:", error);
       }

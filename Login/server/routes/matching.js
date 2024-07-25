@@ -1,75 +1,132 @@
-const router = require("express").Router();
-const collection = require("../models/config");
-const Interest = require("../models/interests");
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const collection = require('../models/config'); // Import your User model
+const Interest = require('../models/interests'); // Import your Interest model
+const Chat = require('../models/chatModel');
+const { studentModel: Student } = require('../models/Student');
 
-// Endpoint to find the best match based on interests
-router.get('/best-match', async (req, res) => {
-    try {
-        const bestMatch = await findBestMatch();
-        if (!bestMatch) {
-            return res.status(200).json({ message: "There are not enough users or there are no matches found. Please try again later." });
-        }
-        res.status(200).json(bestMatch);
-    } catch (error) {
-        console.error('Error finding best match:', error);
-        res.status(500).send({ message: 'Server error' });
+router.post('/', async (req, res) => {
+  console.log('Received POST request at /api/matching');
+  console.log('Request body:', req.body); // Log request body
+
+  const { userId, gender } = req.body;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized: No user ID provided' });
+  }
+
+  if (!gender) {
+    return res.status(400).json({ error: 'Bad Request: No gender provided' });
+  }
+
+  try {
+    // Convert userId to ObjectId
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+    console.log('Converted userId to ObjectId:', userObjectId);
+
+    // Fetch users based on gender, excluding the user making the request
+    let users;
+    if (gender === 'Male' || gender === 'Female') {
+      users = await collection.find({ gender: gender, userId: { $ne: userObjectId } });
+    } else {
+      users = await collection.find({ userId: { $ne: userObjectId } });
     }
-});
 
-// Function to find the best match
-async function findBestMatch() {
-    try {
-        const interests = await Interest.find();
-        console.log('Interests fetched:', interests);
+    console.log('Users found:', users);
 
-        if (interests.length < 2) {
-            return null;
-        }
-
-        let bestMatch = null;
-        let maxMatches = -1;
-
-        for (let i = 0; i < interests.length - 1; i++) {
-            for (let j = i + 1; j < interests.length; j++) {
-                const matches = countMatches(interests[i], interests[j]);
-
-                if (matches > maxMatches) {
-                    maxMatches = matches;
-                    bestMatch = {
-                        user1: interests[i].userId,
-                        user2: interests[j].userId,
-                        matches
-                    };
-                }
-            }
-        }
-
-        if (bestMatch) {
-            const user1 = await collection.findOne({ userId: bestMatch.user1 });
-            const user2 = await collection.findOne({ userId: bestMatch.user2 });
-            bestMatch.user1 = user1.name;
-            bestMatch.user2 = user2.name;
-        }
-
-        console.log('Best match found:', bestMatch);
-        return bestMatch;
-    } catch (error) {
-        console.error('Error in findBestMatch:', error);
-        throw new Error('Error finding best match');
+    // Find matching user interests
+    const matchingUserInterests = await Interest.findOne({ userId: userObjectId });
+    console.log('Matching user interests:', matchingUserInterests);
+    if (!matchingUserInterests) {
+      return res.json({ message: 'No matches found' });
     }
-}
 
-function countMatches(user1, user2) {
-    const interests = ['Sports', 'Music', 'Art', 'Cooking', 'Volunteering', 'Video_Games', 'Dance'];
-    let matches = 0;
+    // Find matching user profile using findOne with userId
+    const matchingUser = await collection.findOne({ userId: userObjectId });
+    console.log('Matching user profile:', matchingUser);
+    if (!matchingUser) {
+      return res.json({ message: 'No matches found' });
+    }
 
-    interests.forEach(interest => {
-        if (user1[interest] && user2[interest]) {
-            matches++;
-        }
+    const matchingUserYear = matchingUser.year;
+
+    // Fetch existing chats for the current user
+    const existingChats = await Chat.find({ users: { $elemMatch: { $eq: userObjectId } } }).select('users');
+    const existingChatUserIds = existingChats.flatMap(chat => chat.users.filter(id => !id.equals(userObjectId)).map(id => id.toString()));
+
+    console.log('Existing chat user IDs:', existingChatUserIds);
+
+    // Exclude users who already have a chat with the current user
+    users = users.filter(user => !existingChatUserIds.includes(user.userId.toString()));
+
+    if (users.length === 0) {
+      return res.json({ message: 'No matches found' });
+    }
+
+    // Calculate scores for users
+    const userScores = await Promise.all(users.map(async (user) => {
+      const userInterests = await Interest.findOne({ userId: user.userId });
+      console.log(`User interests for userId ${user.userId}:`, userInterests);
+
+      if (!userInterests) {
+        return { user, score: 0, yearGap: Math.abs(user.year - matchingUserYear) };
+      }
+
+      const interestKeys = Object.keys(matchingUserInterests._doc).filter(key => key !== '_id' && key !== 'userId' && key !== '__v');
+      const overlap = interestKeys.reduce((score, key) => {
+        return score + (matchingUserInterests[key] && userInterests[key] ? 1 : 0);
+      }, 0);
+
+      const overlappingInterests = interestKeys.filter(key => matchingUserInterests[key] && userInterests[key]);
+
+      return { user, score: overlap, yearGap: Math.abs(user.year - matchingUserYear), overlappingInterests };
+    }));
+
+    console.log('User scores:', userScores);
+    console.log('Student model:', Student);
+
+    // Sort users based on score and year gap
+    userScores.sort((a, b) => {
+      if (b.score === a.score) {
+        return a.yearGap - b.yearGap;
+      }
+      return b.score - a.score;
     });
 
-    return matches;
-}
+    if (userScores.length === 0 || userScores[0].score === 0) {
+      return res.json({ message: 'No matches found' });
+    }
+
+    const highestScore = userScores[0].score;
+    const smallestYearGap = userScores[0].yearGap;
+    const topMatches = userScores.filter(userScore =>
+      userScore.score === highestScore && userScore.yearGap === smallestYearGap
+    );
+
+    const bestMatch = topMatches[Math.floor(Math.random() * topMatches.length)];
+
+    // Fetch the email from the Student model
+    const bestMatchStudent = await Student.findOne({ _id: bestMatch.user.userId });
+    if (!bestMatchStudent) {
+      return res.json({ message: 'No matches found' });
+    }
+
+    // Include only name, faculty, year, and overlapping interests in the response
+    const bestMatchWithInterests = {
+      name: bestMatch.user.name,
+      faculty: bestMatch.user.faculty,
+      year: bestMatch.user.year,
+      interests: bestMatch.overlappingInterests,
+      email: bestMatchStudent.email, // Add email to the response
+      userId: bestMatch.user.userId // Ensure userId is included in the response
+    };
+
+    res.json(bestMatchWithInterests);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Error fetching users' });
+  }
+});
 
 module.exports = router;

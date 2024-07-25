@@ -1,34 +1,37 @@
 .post {
     display: flex;
     flex-direction: row;
-    /* Ensure image and text are side by side */
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 16px;
     width: 100%;
 }
 
 .image {
-    flex: 8;
-    max-width: 300px;
-    /* Adjust the maximum width for the image */
-    height: auto;
+    flex: 3;
+    /* Adjusted flex ratio */
+    height: 100%;
     overflow: hidden;
-    /* Ensure the image doesn't overflow its container */
 }
 
 .image img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+    /* Ensure the image covers the entire container */
     display: block;
 }
 
 .texts {
     flex: 2;
+    /* Adjusted flex ratio */
     padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Center the text vertically */
 }
 
 .texts h2 {
@@ -55,31 +58,4 @@
     margin: 0;
     font-size: 16px;
     color: #555;
-}
-
-.left {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 20px;
-}
-
-.left h1 {
-    margin: 0 0 10px 0;
-    font-size: 24px;
-}
-
-.white_btn {
-    padding: 10px 20px;
-    background-color: white;
-    color: black;
-    border: 2px solid black;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.white_btn:hover {
-    background-color: black;
-    color: white;
 }
