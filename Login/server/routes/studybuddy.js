@@ -23,7 +23,6 @@ function removeDuplicateModules(modules) {
 // Route to handle module data submission
 router.post('/', async (req, res) => {
   let { userId, modules } = req.body;
-  console.log('Received data from client:', { userId, modules });
 
   // Remove duplicates from the modules array
   modules = removeDuplicateModules(modules);
@@ -61,17 +60,6 @@ router.post('/', async (req, res) => {
       const matchedStudent = await Student.findOne({ _id: bestMatch.userId }).select('nickname').exec(); // Fetch the nickname
 
       if (matchedUser && matchedStudent) {
-        console.log(`Matching userId: ${userId}`);
-        console.log(`Best match userId: ${bestMatch.userId}`);
-        console.log(`Highest Score: ${highestScore}`);
-        console.log(`Common modules: ${commonModules.join(', ')}`);
-
-        // Log matched user details
-        console.log(`Matched user name: ${matchedUser.name}`);
-        console.log(`Matched user faculty: ${matchedUser.faculty}`);
-        console.log(`Matched user year of study: ${matchedUser.year}`);
-        console.log(`Matched user nickname: ${matchedStudent.nickname}`);
-
         res.json({
           match: {
             userId: matchedUser.userId, // Include userId in the match object
@@ -83,11 +71,9 @@ router.post('/', async (req, res) => {
           commonModules // Send the common modules
         });
       } else {
-        console.log('No match found in config or student model.');
         res.json({ match: null });
       }
     } else {
-      console.log('No match found.');
       res.json({ match: null });
     }
   } catch (error) {

@@ -23,7 +23,6 @@ function removeDuplicateModules(modules) {
 // Route to handle module data submission
 router.post('/', async (req, res) => {
   let { userId, modules } = req.body;
-  console.log('Received data from client:', { userId, modules });
 
   // Remove duplicates from the modules array
   modules = removeDuplicateModules(modules);

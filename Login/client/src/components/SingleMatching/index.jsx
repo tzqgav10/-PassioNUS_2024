@@ -23,8 +23,6 @@ const Matching = () => {
       return;
     }
 
-    console.log("Submitting form with gender:", gender);
-
     const url = `${import.meta.env.VITE_API_BASE_URL}api/matching`;
     const data = { gender, userId: currentUserId };
 
@@ -39,7 +37,6 @@ const Matching = () => {
       } else {
         setMatch(response.data);
         setNoMatchMessage("");
-        console.log("Best match user:", response.data);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -49,7 +46,6 @@ const Matching = () => {
 
   const handleChatRedirect = async () => {
     if (match) {
-      console.log("Redirecting to chat with user:", match.userId);
       await accessChat(match.userId, chats, setChats, setSelectedChat, toast);
       navigate(`/chat?search=${encodeURIComponent(match.name)}`);
     }

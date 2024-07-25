@@ -7,9 +7,6 @@ const Chat = require('../models/chatModel');
 const { studentModel: Student } = require('../models/Student');
 
 router.post('/', async (req, res) => {
-  console.log('Received POST request at /api/matching');
-  console.log('Request body:', req.body); // Log request body
-
   const { userId, gender } = req.body;
 
   if (!userId) {
@@ -23,7 +20,6 @@ router.post('/', async (req, res) => {
   try {
     // Convert userId to ObjectId
     const userObjectId = new mongoose.Types.ObjectId(userId);
-    console.log('Converted userId to ObjectId:', userObjectId);
 
     // Fetch users based on gender, excluding the user making the request
     let users;
@@ -33,18 +29,14 @@ router.post('/', async (req, res) => {
       users = await collection.find({ userId: { $ne: userObjectId } });
     }
 
-    console.log('Users found:', users);
-
     // Find matching user interests
     const matchingUserInterests = await Interest.findOne({ userId: userObjectId });
-    console.log('Matching user interests:', matchingUserInterests);
     if (!matchingUserInterests) {
       return res.json({ message: 'No matches found' });
     }
 
     // Find matching user profile using findOne with userId
     const matchingUser = await collection.findOne({ userId: userObjectId });
-    console.log('Matching user profile:', matchingUser);
     if (!matchingUser) {
       return res.json({ message: 'No matches found' });
     }
@@ -55,7 +47,6 @@ router.post('/', async (req, res) => {
     const existingChats = await Chat.find({ users: { $elemMatch: { $eq: userObjectId } } }).select('users');
     const existingChatUserIds = existingChats.flatMap(chat => chat.users.filter(id => !id.equals(userObjectId)).map(id => id.toString()));
 
-    console.log('Existing chat user IDs:', existingChatUserIds);
 
     // Exclude users who already have a chat with the current user
     users = users.filter(user => !existingChatUserIds.includes(user.userId.toString()));
@@ -67,7 +58,6 @@ router.post('/', async (req, res) => {
     // Calculate scores for users
     const userScores = await Promise.all(users.map(async (user) => {
       const userInterests = await Interest.findOne({ userId: user.userId });
-      console.log(`User interests for userId ${user.userId}:`, userInterests);
 
       if (!userInterests) {
         return { user, score: 0, yearGap: Math.abs(user.year - matchingUserYear) };
@@ -82,8 +72,6 @@ router.post('/', async (req, res) => {
 
       return { user, score: overlap, yearGap: Math.abs(user.year - matchingUserYear), overlappingInterests };
     }));
-
-    console.log('User scores:', userScores);
 
     // Sort users based on score and year gap
     userScores.sort((a, b) => {

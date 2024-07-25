@@ -10,7 +10,6 @@ export const accessChat = async (
   setSelectedChat,
   toast
 ) => {
-  console.log("accessChat called with userId:", userId);
   try {
     const token = localStorage.getItem("token");
     const { data } = await axios.post(
@@ -22,8 +21,6 @@ export const accessChat = async (
         },
       }
     );
-
-    console.log("Chat data received:", data);
 
     // Check if the chat is already in the list
     if (!chats.find((chat) => chat._id === data._id)) {
@@ -76,7 +73,6 @@ const ChatBox = () => {
         const filteredUsers = data.filter((user) => user._id !== userId);
         setUsers(filteredUsers);
       } catch (error) {
-        console.error("Failed to fetch users", error);
         toast({
           title: "Error fetching users.",
           status: "error",

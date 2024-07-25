@@ -66,7 +66,6 @@ const StudyMatch = () => {
 
   const handleChatRedirect = async () => {
     if (match && match.match.userId) {
-      console.log("Redirecting to chat with user:", match.match.userId);
       await accessChat(
         match.match.userId,
         chats,

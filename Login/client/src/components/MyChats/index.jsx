@@ -42,7 +42,6 @@ const MyChats = () => {
       transports: ["websocket"], // Ensure using WebSocket transport
     });
 
-    const userId = localStorage.getItem("userId");
     socket.emit("setup", userId);
 
     socket.on("message received", (newMessageReceived) => {
