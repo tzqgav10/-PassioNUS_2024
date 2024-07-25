@@ -24,12 +24,13 @@ const StudyMatch = () => {
           }
         }
       } catch (error) {
+        navigate("/module_form"); // If there is no api endpoint, redirect user to add modules first
         console.error("Error fetching modules:", error);
       }
     };
 
     fetchModules();
-  }, [navigate]);
+  }, []);
 
   const handleMatch = async () => {
     const storedUserId = localStorage.getItem("userId");
