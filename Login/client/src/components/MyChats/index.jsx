@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, VStack, Text, Spinner } from "@chakra-ui/react";
 import { ChatState } from "../../Context/ChatProvider";
 import axios from "axios";
@@ -9,6 +9,7 @@ let socket;
 
 const MyChats = () => {
   const { chats, setChats, selectedChat, setSelectedChat } = ChatState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchChats = async () => {
