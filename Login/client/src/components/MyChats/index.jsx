@@ -9,7 +9,6 @@ let socket;
 
 const MyChats = () => {
   const { chats, setChats, selectedChat, setSelectedChat } = ChatState();
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchChats = async () => {
