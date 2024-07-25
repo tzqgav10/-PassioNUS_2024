@@ -5,10 +5,11 @@ import axios from "axios";
 import io from "socket.io-client";
 
 const ENDPOINT = "http://localhost:8080";
-var socket;
+let socket;
 
 const MyChats = () => {
   const { chats, setChats, selectedChat, setSelectedChat } = ChatState();
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -19,6 +20,7 @@ const MyChats = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log("Fetched chats:", data); // Debugging
         setChats(data);
       } catch (error) {
         console.error("Failed to load chats", error);
@@ -31,15 +33,16 @@ const MyChats = () => {
 
   useEffect(() => {
     socket = io(ENDPOINT);
-    const userId = localStorage.getItem("userId");
     socket.emit("setup", userId);
 
     socket.on("message received", (newMessageReceived) => {
+      console.log("Message received:", newMessageReceived); // Debugging
       updateLatestMessage(newMessageReceived);
     });
 
     // Listen for custom event
     const handleMessageSent = (event) => {
+      console.log("Message sent:", event.detail); // Debugging
       updateLatestMessage(event.detail);
     };
     window.addEventListener("message-sent", handleMessageSent);
@@ -54,10 +57,12 @@ const MyChats = () => {
     setChats((prevChats) => {
       const updatedChats = prevChats.map((chat) => {
         if (chat._id === newMessageReceived.chat._id) {
-          chat.latestMessage = newMessageReceived;
+          console.log("Updating chat:", chat._id); // Debugging
+          return { ...chat, latestMessage: newMessageReceived };
         }
         return chat;
       });
+      console.log("Updated chats:", updatedChats); // Debugging
       return updatedChats;
     });
   };
@@ -85,11 +90,11 @@ const MyChats = () => {
               <Text fontWeight="bold">
                 {chat.isGroupChat
                   ? chat.chatName
-                  : chat.users.find((u) => u._id !== chat._id).name}
+                  : chat.users.find((u) => u._id !== userId).nickname}
               </Text>
               {chat.latestMessage && (
                 <Text mt={1} fontSize="sm" color="gray.500">
-                  <strong>{chat.latestMessage.sender.name}: </strong>
+                  <strong>{chat.latestMessage.sender.nickname}: </strong>
                   {chat.latestMessage.content.length > 50
                     ? `${chat.latestMessage.content.substring(0, 50)}...`
                     : chat.latestMessage.content}
