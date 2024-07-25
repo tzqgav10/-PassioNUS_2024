@@ -10,6 +10,7 @@ let socket;
 const MyChats = () => {
   const { chats, setChats, selectedChat, setSelectedChat } = ChatState();
   const [loading, setLoading] = useState(true);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchChats = async () => {
