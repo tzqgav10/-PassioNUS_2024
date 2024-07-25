@@ -84,7 +84,6 @@ router.post('/', async (req, res) => {
     }));
 
     console.log('User scores:', userScores);
-    console.log('Student model:', Student);
 
     // Sort users based on score and year gap
     userScores.sort((a, b) => {
@@ -106,19 +105,20 @@ router.post('/', async (req, res) => {
 
     const bestMatch = topMatches[Math.floor(Math.random() * topMatches.length)];
 
-    // Fetch the email from the Student model
-    const bestMatchStudent = await Student.findOne({ _id: bestMatch.user.userId });
+    // Fetch the email and nickname from the Student model
+    const bestMatchStudent = await Student.findOne({ _id: bestMatch.user.userId }).select('email nickname');
     if (!bestMatchStudent) {
       return res.json({ message: 'No matches found' });
     }
 
-    // Include only name, faculty, year, and overlapping interests in the response
+    // Include only name, faculty, year, overlapping interests, and nickname in the response
     const bestMatchWithInterests = {
       name: bestMatch.user.name,
       faculty: bestMatch.user.faculty,
       year: bestMatch.user.year,
       interests: bestMatch.overlappingInterests,
       email: bestMatchStudent.email, // Add email to the response
+      nickname: bestMatchStudent.nickname, // Add nickname to the response
       userId: bestMatch.user.userId // Ensure userId is included in the response
     };
 

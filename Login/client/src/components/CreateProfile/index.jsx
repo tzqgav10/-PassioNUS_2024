@@ -44,20 +44,6 @@ const CreateProfile = () => {
         <h2>Create Profile</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.form_group}>
-            <label htmlFor="name">Display Name:</label>
-            <input
-              type="text"
-              id="name"
-              name="username"
-              placeholder="Enter your nickname to be displayed"
-              value={data.username}
-              onChange={handleChange}
-              required
-              autoComplete="off"
-              className={styles.input}
-            />
-          </div>
-          <div className={styles.form_group}>
             <label htmlFor="faculty">Faculty:</label>
             <select
               id="faculty"

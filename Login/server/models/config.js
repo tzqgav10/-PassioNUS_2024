@@ -9,10 +9,6 @@ const ProfileSchema = new Schema({
         unique: true,
         ref: 'students'  // Reference to the students collection
     },
-    name: {
-        type: String,
-        required: true
-    },
     faculty: {
         type: String,
         required: true

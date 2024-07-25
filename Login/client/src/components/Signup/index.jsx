@@ -6,6 +6,7 @@ import styles from "./styles.module.css";
 const Signup = () => {
   const [data, setData] = useState({
     name: "",
+    nickname: "",
     email: "",
     password: "",
   });
@@ -61,6 +62,15 @@ const Signup = () => {
               name="name"
               onChange={handleChange}
               value={data.name}
+              required
+              className={styles.input}
+            />
+            <input
+              type="text"
+              placeholder="Display Name"
+              name="nickname"
+              onChange={handleChange}
+              value={data.nickname}
               required
               className={styles.input}
             />

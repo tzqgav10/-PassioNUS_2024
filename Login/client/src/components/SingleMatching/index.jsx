@@ -82,7 +82,7 @@ const Matching = () => {
       {match && (
         <div className={styles.matchInfo}>
           <h2>Best Match:</h2>
-          <p>Name: {match.name}</p>
+          <p>Name: {match.nickname}</p>
           <p>Faculty: {match.faculty}</p>
           <p>Year: {match.year}</p>
           <p>Interests: {match.interests.join(", ")}</p>

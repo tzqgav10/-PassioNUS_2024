@@ -119,7 +119,7 @@ const StudyMatch = () => {
         <div className={styles.matchInfo}>
           <h2>Matched User Details</h2>
           <p>
-            <strong>Name:</strong> {match.match.name}
+            <strong>Name:</strong> {match.match.nickname}
           </p>
           <p>
             <strong>Year of Study:</strong> {match.match.yearOfStudy}
