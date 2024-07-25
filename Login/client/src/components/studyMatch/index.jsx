@@ -2,12 +2,17 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
+import { useToast } from "@chakra-ui/react";
+import { ChatState } from "../../Context/ChatProvider";
+import { accessChat } from "../ChatBox"; // Import the accessChat function
 
 const StudyMatch = () => {
   const [modules, setModules] = useState([]);
   const [match, setMatch] = useState(null);
   const [noMatchMessage, setNoMatchMessage] = useState("");
   const navigate = useNavigate();
+  const toast = useToast();
+  const { chats, setChats, setSelectedChat } = ChatState();
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -30,7 +35,7 @@ const StudyMatch = () => {
     };
 
     fetchModules();
-  }, []);
+  }, [navigate]);
 
   const handleMatch = async () => {
     const storedUserId = localStorage.getItem("userId");
@@ -42,6 +47,7 @@ const StudyMatch = () => {
 
     try {
       const response = await axios.post(url, data, { withCredentials: true });
+      console.log("Server response:", response.data);
       if (response.data.match) {
         setMatch(response.data);
         setNoMatchMessage("");
@@ -58,16 +64,19 @@ const StudyMatch = () => {
     }
   };
 
-  const handleCopyEmail = () => {
-    if (match && match.match.email) {
-      navigator.clipboard
-        .writeText(match.match.email)
-        .then(() => {
-          alert("Email copied to clipboard!");
-        })
-        .catch((err) => {
-          console.error("Failed to copy email:", err);
-        });
+  const handleChatRedirect = async () => {
+    if (match && match.match.userId) {
+      console.log("Redirecting to chat with user:", match.match.userId);
+      await accessChat(
+        match.match.userId,
+        chats,
+        setChats,
+        setSelectedChat,
+        toast
+      );
+      navigate(`/chat?search=${encodeURIComponent(match.match.name)}`);
+    } else {
+      console.error("No userId found in match object");
     }
   };
 
@@ -121,6 +130,12 @@ const StudyMatch = () => {
           <p>
             <strong>Common Modules:</strong> {match.commonModules.join(", ")}
           </p>
+          <button
+            onClick={handleChatRedirect}
+            className={`${styles.button} ${styles.black}`}
+          >
+            Click here to chat
+          </button>
         </div>
       )}
     </div>

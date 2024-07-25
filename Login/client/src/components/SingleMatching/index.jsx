@@ -55,19 +55,6 @@ const Matching = () => {
     }
   };
 
-  const handleCopyEmail = () => {
-    if (match) {
-      navigator.clipboard
-        .writeText(match.email)
-        .then(() => {
-          alert("Email copied to clipboard!");
-        })
-        .catch((err) => {
-          console.error("Failed to copy email:", err);
-        });
-    }
-  };
-
   return (
     <div className={styles.container}>
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -99,17 +86,6 @@ const Matching = () => {
           <p>Faculty: {match.faculty}</p>
           <p>Year: {match.year}</p>
           <p>Interests: {match.interests.join(", ")}</p>
-          <p>
-            Email: <a href={`mailto:${match.email}`}>{match.email}</a>{" "}
-            {/* Clickable email link */}
-          </p>
-          <button
-            onClick={handleCopyEmail}
-            className={`${styles.button} ${styles.blue}`}
-          >
-            Copy Email
-          </button>{" "}
-          {/* Copy email button */}
           <button
             onClick={handleChatRedirect}
             className={`${styles.button} ${styles.black}`}

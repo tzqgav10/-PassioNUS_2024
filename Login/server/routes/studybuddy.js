@@ -71,6 +71,7 @@ router.post('/', async (req, res) => {
 
         res.json({
           match: {
+            userId: matchedUser.userId, // Include userId in the match object
             name: matchedUser.name,
             faculty: matchedUser.faculty,
             yearOfStudy: matchedUser.year
