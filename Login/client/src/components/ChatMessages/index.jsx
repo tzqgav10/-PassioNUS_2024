@@ -83,7 +83,7 @@ const ChatMessages = () => {
     if (newMessage.trim()) {
       try {
         const { data } = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/api/message`,
+          `${import.meta.env.VITE_API_BASE_URL}api/message`,
           {
             content: newMessage,
             chatId: selectedChat._id,
