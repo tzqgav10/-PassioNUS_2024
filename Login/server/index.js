@@ -75,10 +75,9 @@ const port = process.env.PORT || 8080;
 server.listen(port, () => console.log(`Listening on port ${port}...`));
 
 io.on("connection", (socket) => {
-    console.log('connected to socket.io');
 
     socket.on("setup", (user) => {
-        socket.join(user._id);  // Ensure you are joining the room with the user ID
+        socket.join(user);  
         socket.emit("connected");
     });
 
@@ -93,10 +92,10 @@ io.on("connection", (socket) => {
     socket.on("new message", (newMessageReceived) => {
         var chat = newMessageReceived.chat;
 
-        if (!chat.users) return console.log('chat.users not defined');
+        if(!chat.users) return console.log('chat.users not defined');
 
         chat.users.forEach(user => {
-            if (user._id == newMessageReceived.sender._id) return;
+            if(user._id == newMessageReceived.sender._id) return;
 
             socket.in(user._id).emit("message received", newMessageReceived);
         });
@@ -104,6 +103,6 @@ io.on("connection", (socket) => {
 
     socket.off("setup", () => {
         console.log("User Disconnected");
-        socket.leave(user._id);  // Ensure you leave the room with the user ID
+        socket.leave(user); 
     });
 });

@@ -60,6 +60,24 @@ router.post("/", async (req, res) => {
 	}
 });
 
+router.get("/setup-status", async (req, res) => {
+	try {
+	  const userId = req.query.userId; // Assuming userId is passed as a query parameter
+	  const user = await studentModel.findById(userId);
+  
+	  if (!user) {
+		return res.status(404).send({ message: "User not found" });
+	  }
+  
+	  res.status(200).send({
+		setup_profile: user.setup_profile,
+		setup_interests: user.setup_interests,
+	  });
+	} catch (error) {
+	  console.error("Internal Server Error:", error);
+	  res.status(500).send({ message: "Internal Server Error" });
+	}
+  });
 
 const validate = (data) => {
 	const schema = Joi.object({

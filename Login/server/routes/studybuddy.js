@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const Module = require('../models/modules');
 const collection = require('../models/config');
+const { studentModel: Student } = require('../models/Student'); // Import your Student model
 
 // Function to remove duplicate modules by name
 function removeDuplicateModules(modules) {
@@ -43,7 +44,7 @@ router.post('/', async (req, res) => {
     let commonModules = [];
 
     for (const moduleEntry of allModules) {
-      if (moduleEntry.userId !== userId) {
+      if (moduleEntry.userId.toString() !== userId.toString()) { // Ensure userId is compared correctly
         const { score, common } = calculateSimilarityScore(modules, moduleEntry.modules);
 
         if (score > highestScore) {
@@ -57,8 +58,9 @@ router.post('/', async (req, res) => {
     // If a best match is found, retrieve additional information
     if (bestMatch) {
       const matchedUser = await collection.findOne({ userId: bestMatch.userId }).exec();
+      const matchedStudent = await Student.findOne({ _id: bestMatch.userId }).select('nickname').exec(); // Fetch the nickname
 
-      if (matchedUser) {
+      if (matchedUser && matchedStudent) {
         console.log(`Matching userId: ${userId}`);
         console.log(`Best match userId: ${bestMatch.userId}`);
         console.log(`Highest Score: ${highestScore}`);
@@ -68,18 +70,20 @@ router.post('/', async (req, res) => {
         console.log(`Matched user name: ${matchedUser.name}`);
         console.log(`Matched user faculty: ${matchedUser.faculty}`);
         console.log(`Matched user year of study: ${matchedUser.year}`);
+        console.log(`Matched user nickname: ${matchedStudent.nickname}`);
 
         res.json({
           match: {
             userId: matchedUser.userId, // Include userId in the match object
             name: matchedUser.name,
             faculty: matchedUser.faculty,
-            yearOfStudy: matchedUser.year
+            yearOfStudy: matchedUser.year,
+            nickname: matchedStudent.nickname // Include nickname in the match object
           },
           commonModules // Send the common modules
         });
       } else {
-        console.log('No match found in config.');
+        console.log('No match found in config or student model.');
         res.json({ match: null });
       }
     } else {
@@ -87,7 +91,7 @@ router.post('/', async (req, res) => {
       res.json({ match: null });
     }
   } catch (error) {
-    console.error('Error handling studybuddy request:', error);
+    console.error('Error handling study buddy request:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

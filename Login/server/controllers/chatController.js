@@ -25,7 +25,7 @@ const accessChat = asyncHandler(async (req, res) => {
 
   isChat = await studentModel.populate(isChat, {
     path: "latestMessage.sender",
-    select: "name email",
+    select: "nickname email",
   });
 
   if (isChat.length > 0) {
@@ -56,17 +56,17 @@ const accessChat = asyncHandler(async (req, res) => {
 //@access          Protected
 const fetchChats = asyncHandler(async (req, res) => {
   try {
-    Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
+    let results = await Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
       .populate("users", "-password")
-      .populate("latestMessage")
-      .sort({ updatedAt: -1 })
-      .then(async (results) => {
-        results = await studentModel.populate(results, {
-          path: "latestMessage.sender",
-          select: "name email",
-        });
-        res.status(200).send(results);
-      });
+      .populate({
+        path: "latestMessage",
+        populate: {
+          path: "sender",
+          select: "nickname email"
+        }
+      })
+      .sort({ updatedAt: -1 });
+    res.status(200).send(results);
   } catch (error) {
     res.status(400);
     throw new Error(error.message);

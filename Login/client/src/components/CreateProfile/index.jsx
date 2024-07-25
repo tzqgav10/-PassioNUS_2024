@@ -44,20 +44,6 @@ const CreateProfile = () => {
         <h2>Create Profile</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.form_group}>
-            <label htmlFor="name">Name:</label>
-            <input
-              type="text"
-              id="name"
-              name="username"
-              placeholder="Enter your name"
-              value={data.username}
-              onChange={handleChange}
-              required
-              autoComplete="off"
-              className={styles.input}
-            />
-          </div>
-          <div className={styles.form_group}>
             <label htmlFor="faculty">Faculty:</label>
             <select
               id="faculty"
@@ -103,7 +89,6 @@ const CreateProfile = () => {
               <option value="">Select your gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              <option value="Other">Other</option>
             </select>
           </div>
           {error && <div className={styles.error_msg}>{error}</div>}
