@@ -16,6 +16,8 @@ import MatchOptions from "./components/MatchOptions";
 import SingleEventPage from "./components/SingleEventPage";
 import EditEvent from "./components/EditEvent";
 import ChatPage from "./components/Chat";
+import ModulesForm from "./components/ModuleForm";
+import StudyMatch from "./components/studyMatch";
 
 function App() {
   const user = localStorage.getItem("token");
@@ -38,7 +40,7 @@ function App() {
             <Route path="home" element={<Main />} />
             <Route path="matching" element={<MatchOptions />} />
             <Route path="match_single" element={<SingleMatch />} />
-            <Route path="study" element={<Main />} />
+            <Route path="study" element={<StudyMatch />} />
             <Route path="events" element={<Events />} />
             <Route path="post/:id" element={<SingleEventPage />} />
             <Route path="edit_event/:id" element={<EditEvent />} />
@@ -46,6 +48,7 @@ function App() {
             <Route path="profile" element={<ProfilePage />} />
             <Route path="chat" element={<ChatPage />} />
             <Route path="settings" element={<ChangePassword />} />
+            <Route path="module_form" element={<ModulesForm />} />
           </Route>
         </>
       )}
