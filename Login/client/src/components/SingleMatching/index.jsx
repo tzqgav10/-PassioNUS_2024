@@ -11,7 +11,6 @@ const Matching = () => {
   const [match, setMatch] = useState(null);
   const [noMatchMessage, setNoMatchMessage] = useState("");
   const navigate = useNavigate();
-  const toast = useToast();
   const { chats, setChats, setSelectedChat } = ChatState();
   const currentUserId = localStorage.getItem("userId");
 
@@ -46,7 +45,7 @@ const Matching = () => {
 
   const handleChatRedirect = async () => {
     if (match) {
-      await accessChat(match.userId, chats, setChats, setSelectedChat, toast);
+      await accessChat(match.userId, chats, setChats, setSelectedChat);
       navigate(`/chat?search=${encodeURIComponent(match.name)}`);
     }
   };

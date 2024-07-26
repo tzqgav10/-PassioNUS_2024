@@ -8,7 +8,6 @@ export const accessChat = async (
   chats,
   setChats,
   setSelectedChat,
-  toast,
   setSearchQuery // Clear search after creating chat
 ) => {
   try {
@@ -32,12 +31,6 @@ export const accessChat = async (
     setSearchQuery("");
   } catch (error) {
     console.error("Failed to access chat", error);
-    toast({
-      title: "Error accessing chat.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
   }
 };
 
@@ -126,7 +119,6 @@ const ChatBox = () => {
                         chats,
                         setChats,
                         setSelectedChat,
-                        toast,
                         setSearchQuery
                       )
                     }

@@ -11,7 +11,6 @@ const StudyMatch = () => {
   const [match, setMatch] = useState(null);
   const [noMatchMessage, setNoMatchMessage] = useState("");
   const navigate = useNavigate();
-  const toast = useToast();
   const { chats, setChats, setSelectedChat } = ChatState();
 
   useEffect(() => {
@@ -66,13 +65,7 @@ const StudyMatch = () => {
 
   const handleChatRedirect = async () => {
     if (match && match.match.userId) {
-      await accessChat(
-        match.match.userId,
-        chats,
-        setChats,
-        setSelectedChat,
-        toast
-      );
+      await accessChat(match.match.userId, chats, setChats, setSelectedChat);
       navigate(`/chat?search=${encodeURIComponent(match.match.name)}`);
     } else {
       console.error("No userId found in match object");
