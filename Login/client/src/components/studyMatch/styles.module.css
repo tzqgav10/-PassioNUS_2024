@@ -1,0 +1,97 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.header {
+    margin-bottom: 20px;
+    font-size: 20px;
+    /* Added space between heading and content */
+}
+
+.blue {
+    background-color: #007bff;
+}
+
+.blue:hover {
+    background-color: #0056b3;
+}
+
+.black {
+    background-color: #000000;
+}
+
+.black:hover {
+    background-color: #333333;
+}
+
+.modulesList {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.modulesList ul {
+    padding-left: 20px;
+}
+
+.modulesList li {
+    margin: 5px 0;
+}
+
+.matchInfo {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.matchInfo h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.matchInfo p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.noMatchMessage {
+    color: red;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

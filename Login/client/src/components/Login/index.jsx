@@ -37,6 +37,9 @@ const Login = () => {
         console.error("Login error response:", error.response); // Log the error response
         if (error.response.status >= 400 && error.response.status <= 500) {
           setError(error.response.data.message);
+          setTimeout(() => {
+            setError("");
+          }, 3000); // Clear the error message after 3 seconds
         }
       } else {
         console.error("Login error:", error); // Log the general error if there's no response
@@ -69,13 +72,13 @@ const Login = () => {
               className={styles.input}
             />
             {error && <div className={styles.error_msg}>{error}</div>}
-            <button type="submit" className={styles.green_btn}>
+            <button type="submit" className={styles.blue_btn}>
               Sign In
             </button>
           </form>
         </div>
         <div className={styles.right}>
-          <h1>New Here ?</h1>
+          <h1>Don't Have an Account?</h1>
           <Link to="/signup">
             <button type="button" className={styles.white_btn}>
               Sign Up
