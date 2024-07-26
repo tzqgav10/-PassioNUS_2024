@@ -44,9 +44,6 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 
-// Serve static files from the uploads folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // Serve static files from the Vite build
 const clientBuildPath = path.join(__dirname, '../client/dist'); // Adjusted path
 app.use(express.static(clientBuildPath));

@@ -8,7 +8,8 @@ export const accessChat = async (
   chats,
   setChats,
   setSelectedChat,
-  toast
+  toast,
+  setSearchQuery // Clear search after creating chat
 ) => {
   try {
     const token = localStorage.getItem("token");
@@ -27,6 +28,8 @@ export const accessChat = async (
       setChats([data, ...chats]); // Add new chat to the list
     }
     setSelectedChat(data);
+    // Clear the search query
+    setSearchQuery("");
   } catch (error) {
     console.error("Failed to access chat", error);
     toast({
@@ -123,7 +126,8 @@ const ChatBox = () => {
                         chats,
                         setChats,
                         setSelectedChat,
-                        toast
+                        toast,
+                        setSearchQuery
                       )
                     }
                     cursor="pointer"

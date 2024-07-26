@@ -42,15 +42,12 @@ const SingleEventPage = () => {
         </button>
         {postInfo.userId === userId && (
           <button onClick={handleEdit} className={styles.editButton}>
-            Edit Post
+            Edit Event
           </button>
         )}
       </div>
       <div className={styles.image}>
-        <img
-          src={`${import.meta.env.VITE_API_BASE_URL}${postInfo.cover}`}
-          alt={postInfo.title}
-        />
+        <img src={postInfo.cover} alt={postInfo.title} />
       </div>
       <h1 className={styles.header}>{postInfo.title}</h1>
       <p className={styles.summary}>{postInfo.summary}</p>

@@ -33,10 +33,10 @@ const Events = () => {
   return (
     <div>
       <div className={styles.left}>
-        <h1>Create a new post</h1>
+        <h1>Create a new event</h1>
         <Link to="/create_event">
           <button type="button" className={styles.white_btn}>
-            Create Post
+            Create Event
           </button>
         </Link>
       </div>

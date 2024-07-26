@@ -50,14 +50,6 @@ const Main = () => {
             exciting university life!
           </p>
         </section>
-        <section id="contact" className={styles.section}>
-          <h2>Contact Us</h2>
-          <p>
-            Feel free to reach out to us at any time. You can email us at{" "}
-            <a href="mailto:e1156223@u.nus.edu">e1156223@u.nus.edu</a> (boss yb)
-            or call us at 9876 4321.
-          </p>
-        </section>
       </div>
     </div>
   );

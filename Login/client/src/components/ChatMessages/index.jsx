@@ -25,19 +25,12 @@ const ChatMessages = () => {
 
     socket.emit("setup", userId);
     socket.on("connected", () => setSocketConnected(true));
-
-    return () => {
-      socket.off("connected");
-      socket.disconnect();
-    };
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
-    if (selectedChat) {
-      fetchMessages();
-      selectedChatCompare = selectedChat;
-      socket.emit("join chat", selectedChat._id);
-    }
+    fetchMessages();
+
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
 
   useEffect(() => {
@@ -48,23 +41,17 @@ const ChatMessages = () => {
       ) {
         // give notification
       } else {
-        setMessages((prevMessages) => [...prevMessages, newMessageReceived]);
+        setMessages([...messages, newMessageReceived]);
         updateChatList(newMessageReceived);
       }
     });
-
-    return () => {
-      socket.off("message received");
-    };
-  }, [messages]);
+  });
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   const fetchMessages = async () => {
-    if (!selectedChat) return;
-
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}api/message/${selectedChat._id}`,
@@ -96,6 +83,9 @@ const ChatMessages = () => {
         socket.emit("new message", data);
         setMessages((prevMessages) => [...prevMessages, data]);
         scrollToBottom();
+
+        // Emit custom event
+        window.dispatchEvent(new CustomEvent("message-sent", { detail: data }));
       } catch (error) {
         console.error("Failed to send message:", error);
       }

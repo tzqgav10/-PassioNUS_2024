@@ -19,10 +19,7 @@ const EventPostLayout = ({
     <div className={styles.post}>
       <div className={styles.image}>
         <Link to={`/post/${_id}`}>
-          <img
-            src={`${import.meta.env.VITE_API_BASE_URL}${cover}`}
-            alt="Event Cover"
-          />
+          <img src={cover} alt="Event Cover" />
         </Link>
       </div>
       <div className={styles.texts}>
