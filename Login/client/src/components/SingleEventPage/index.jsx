@@ -40,13 +40,13 @@ const SingleEventPage = () => {
         </button>
         {postInfo.userId === userId && (
           <button onClick={handleEdit} className={styles.editButton}>
-            Edit Post
+            Edit Event
           </button>
         )}
       </div>
       <div className={styles.image}>
         <img
-          src={`http://localhost:8080/${postInfo.cover}`}
+          src={postInfo.cover} // Use the cover URL directly
           alt={postInfo.title}
         />
       </div>

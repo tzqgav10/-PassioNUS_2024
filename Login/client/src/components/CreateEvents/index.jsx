@@ -49,7 +49,7 @@ const CreateEvents = () => {
       return;
     }
 
-    const userId = localStorage.getItem("userId"); // Get userId from localStorage
+    const userId = localStorage.getItem("userId");
 
     const formData = new FormData();
     formData.append("title", data.title);
@@ -57,7 +57,7 @@ const CreateEvents = () => {
     formData.append("venue", data.venue);
     formData.append("date", data.date);
     formData.append("content", data.content);
-    formData.append("userId", userId); // Include userId in the formData
+    formData.append("userId", userId);
     if (file) {
       formData.append("file", file);
     }
@@ -71,7 +71,6 @@ const CreateEvents = () => {
       });
       console.log("Success:", response.data);
       setSuccess("Event created successfully!");
-      // Optionally, reset the form here
       setData({
         title: "",
         summary: "",
@@ -80,9 +79,8 @@ const CreateEvents = () => {
         content: "",
       });
       setFile(null);
-      // Redirect or show success message
       setTimeout(() => {
-        navigate("/events"); // Use navigate instead of window.location
+        navigate("/events");
       }, 2000);
     } catch (error) {
       if (
@@ -106,18 +104,18 @@ const CreateEvents = () => {
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [error, success]); // To clear error or success msg after 3s
+  }, [error, success]);
 
   const getTodayDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, "0");
-    const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const month = String(today.getMonth() + 1).padStart(2, "0");
     const year = today.getFullYear();
     return `${year}-${month}-${day}`;
   };
 
   const handleBack = () => {
-    navigate("/events"); // Use navigate instead of window.location
+    navigate("/events");
   };
 
   return (
