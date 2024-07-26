@@ -1,17 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const collection = require('../models/config'); // Ensure this path is correct
+const { studentModel } = require('../models/Student');
 
 // Endpoint to fetch user profile
 router.get('/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
         console.log('Received userId:', userId); // Debugging line
-        const userProfile = await collection.findOne({ userId: userId }); // Find by userId
-        if (!userProfile) {
+
+        // Fetch user profile and nickname from studentModel
+        const userProfile = await collection.findOne({ userId: userId });
+        const student = await studentModel.findOne({ _id: userId }).select("name nickname");
+
+        if (!userProfile || !student) {
             return res.status(404).send({ message: 'Profile not found' });
         }
-        res.send(userProfile);
+
+        const response = {
+            ...userProfile._doc,
+            name: student.name,
+            nickname: student.nickname,
+        };
+
+        res.send(response);
     } catch (error) {
         console.error('Error fetching profile:', error); // Logging error
         res.status(500).send({ message: 'Server error' });
@@ -22,19 +34,31 @@ router.get('/:userId', async (req, res) => {
 router.put('/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
-        const { name, faculty, year, gender } = req.body;
+        const { name, faculty, year, gender, nickname } = req.body;
 
         const updatedProfile = await collection.findOneAndUpdate(
             { userId: userId },
-            { name, faculty, year, gender },
+            { faculty, year, gender },
             { new: true, useFindAndModify: false }
         );
 
-        if (!updatedProfile) {
+        const updatedStudent = await studentModel.findOneAndUpdate(
+            { _id: userId },
+            { name, nickname },
+            { new: true, useFindAndModify: false }
+        );
+
+        if (!updatedProfile || !updatedStudent) {
             return res.status(404).send({ message: 'Profile not found' });
         }
 
-        res.send(updatedProfile);
+        const response = {
+            ...updatedProfile._doc,
+            name: updatedStudent.name,
+            nickname: updatedStudent.nickname,
+        };
+
+        res.send(response);
     } catch (error) {
         console.error('Error updating profile:', error); // Logging error
         res.status(500).send({ message: 'Server error' });

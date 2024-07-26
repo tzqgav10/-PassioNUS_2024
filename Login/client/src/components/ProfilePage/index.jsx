@@ -5,6 +5,7 @@ import styles from "./styles.module.css";
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
     name: "",
+    nickname: "",
     faculty: "",
     year: "",
     gender: "",
@@ -108,6 +109,7 @@ const ProfilePage = () => {
 
       const profileData = {
         name: profile.name,
+        nickname: profile.nickname,
         faculty: profile.faculty,
         year: profile.year,
         gender: profile.gender,
@@ -146,7 +148,6 @@ const ProfilePage = () => {
         <form onSubmit={handleSubmit}>
           {/* Profile Section */}
           <div className={styles.section}>
-            <h3>Profile</h3>
             <div className={styles.form_group}>
               <label htmlFor="name" className={styles.form_group_label}>
                 Name:
@@ -157,6 +158,22 @@ const ProfilePage = () => {
                 name="name"
                 placeholder="Enter your name"
                 value={profile.name}
+                onChange={handleChange}
+                required
+                autoComplete="off"
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.form_group}>
+              <label htmlFor="nickname" className={styles.form_group_label}>
+                Nickname:
+              </label>
+              <input
+                type="text"
+                id="nickname"
+                name="nickname"
+                placeholder="Enter your nickname"
+                value={profile.nickname}
                 onChange={handleChange}
                 required
                 autoComplete="off"
@@ -222,7 +239,6 @@ const ProfilePage = () => {
 
           {/* Interests Section */}
           <div className={styles.section}>
-            <h3>Interests</h3>
             <div className={styles.form_group}>
               <label className={styles.form_group_label}>
                 <input
@@ -327,6 +343,10 @@ const ProfilePage = () => {
             <div className={styles.profile_item}>
               <strong className={styles.profile_item_strong}>Name:</strong>{" "}
               {profile.name}
+            </div>
+            <div className={styles.profile_item}>
+              <strong className={styles.profile_item_strong}>Nickname:</strong>{" "}
+              {profile.nickname}
             </div>
             <div className={styles.profile_item}>
               <strong className={styles.profile_item_strong}>Faculty:</strong>{" "}

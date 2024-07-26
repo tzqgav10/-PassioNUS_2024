@@ -8,6 +8,7 @@ const EventSchema = new Schema({
     venue:String,
     content:String,
     cover:String,
+    userId: String, // Find the author of the event post
 });
 
 const eventModel = mongoose.model('Event', EventSchema);

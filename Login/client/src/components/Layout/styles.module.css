@@ -89,3 +89,11 @@ body {
     position: relative;
     bottom: 0;
 }
+
+/* Right navigation buttons container */
+.right_nav_buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Adjust the gap as needed */
+}

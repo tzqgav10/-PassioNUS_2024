@@ -1,32 +1,94 @@
-.bestMatchContainer {
+/* styles.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 20px;
     background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 0 auto;
 }
 
-.bestMatchContainer h2 {
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.label {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
-.bestMatchContainer p {
-    margin: 10px 0;
+.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 10px;
+    display: block;
 }
 
-.errorMessage {
-    color: #d9534f;
-    background-color: #f2dede;
-    border: 1px solid #ebccd1;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px 0;
+.blue {
+    background-color: #007bff;
 }
 
-.message {
-    color: #5bc0de;
-    background-color: #d9edf7;
-    border: 1px solid #bce8f1;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px 0;
+.blue:hover {
+    background-color: #0056b3;
+}
+
+.black {
+    background-color: #000000;
+}
+
+.black:hover {
+    background-color: #333333;
+}
+
+.matchInfo {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.matchInfo h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.matchInfo p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.noMatchMessage {
+    color: black;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }

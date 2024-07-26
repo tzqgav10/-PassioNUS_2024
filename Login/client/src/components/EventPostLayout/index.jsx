@@ -1,7 +1,15 @@
 import styles from "./styles.module.css";
+import { Link } from "react-router-dom";
 
-const EventPostLayout = ({ title, summary, venue, date, cover, content }) => {
-  // Function to format the date
+const EventPostLayout = ({
+  _id,
+  title,
+  summary,
+  venue,
+  date,
+  cover,
+  content,
+}) => {
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
     return new Date(dateString).toLocaleDateString("en-GB", options);
@@ -10,10 +18,9 @@ const EventPostLayout = ({ title, summary, venue, date, cover, content }) => {
   return (
     <div className={styles.post}>
       <div className={styles.image}>
-        <img
-          src={`${import.meta.env.VITE_API_BASE_URL}${cover}`}
-          alt="Event Cover"
-        />
+        <Link to={`/post/${_id}`}>
+          <img src={cover} alt="Event Cover" />
+        </Link>
       </div>
       <div className={styles.texts}>
         <h2>{title}</h2>
@@ -22,7 +29,6 @@ const EventPostLayout = ({ title, summary, venue, date, cover, content }) => {
           <span className={styles.date}>{formatDate(date)}</span>
         </p>
         <p className={styles.summary}>{summary}</p>
-        <div dangerouslySetInnerHTML={{ __html: content }} />
       </div>
     </div>
   );

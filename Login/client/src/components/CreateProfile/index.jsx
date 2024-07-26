@@ -23,7 +23,6 @@ const CreateProfile = () => {
       const userId = localStorage.getItem("userId"); // Get userId from local storage
       const url = `${import.meta.env.VITE_API_BASE_URL}api/create_profile`; // Updated URL
       const res = await axios.post(url, { ...data, userId }); // Include userId in the request body
-      console.log("Profile created successfully:", res.data); // Logging response
       navigate("/interests"); // Navigate to the interest page after successful profile creation
       window.location.reload(); // reload page
     } catch (error) {
@@ -43,20 +42,6 @@ const CreateProfile = () => {
       <div className={styles.form_container}>
         <h2>Create Profile</h2>
         <form onSubmit={handleSubmit}>
-          <div className={styles.form_group}>
-            <label htmlFor="name">Name:</label>
-            <input
-              type="text"
-              id="name"
-              name="username"
-              placeholder="Enter your name"
-              value={data.username}
-              onChange={handleChange}
-              required
-              autoComplete="off"
-              className={styles.input}
-            />
-          </div>
           <div className={styles.form_group}>
             <label htmlFor="faculty">Faculty:</label>
             <select
@@ -103,7 +88,6 @@ const CreateProfile = () => {
               <option value="">Select your gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              <option value="Other">Other</option>
             </select>
           </div>
           {error && <div className={styles.error_msg}>{error}</div>}
