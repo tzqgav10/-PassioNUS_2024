@@ -1,5 +1,89 @@
-/* styles.module.css */
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Main container */
+.main_container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Navbar styles */
+.navbar {
+    width: 100%;
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar h1 {
+    margin: 0;
+}
+
+.nav_links {
+    display: flex;
+    gap: 15px;
+}
+
+.nav_links a {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.nav_links a:hover {
+    background-color: #555;
+}
+
+.white_btn {
+    background-color: white;
+    color: #333;
+    border: 1px solid #333;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.white_btn:hover {
+    background-color: #f4f4f4;
+}
+
+/* Main content styles */
+.main_content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Footer styles */
+.footer {
+    width: 100%;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    box-sizing: border-box;
+    position: relative;
+    bottom: 0;
+}
+
+/* Profile and Interests Container */
 .profile_interests_container {
     max-width: 800px;
     margin: 50px auto;
@@ -50,7 +134,6 @@ h3 {
 .checkbox_input {
     margin-right: 10px;
 }
-
 
 .form_group_input,
 .form_group_select {
@@ -129,4 +212,54 @@ h3 {
 .profile_item_strong,
 .interests_item_strong {
     color: #555;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar h1 {
+        font-size: 18px;
+    }
+
+    .nav_links {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .main_content {
+        padding: 10px;
+    }
+
+    .profile_interests_container {
+        margin: 20px;
+        padding: 10px;
+    }
+
+    .form_group_input,
+    .form_group_select {
+        padding: 8px;
+    }
+
+    .submit_btn,
+    .cancel_btn,
+    .edit_btn {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .profile_item,
+    .interests_item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile_item_strong,
+    .interests_item_strong {
+        margin-bottom: 5px;
+    }
 }
